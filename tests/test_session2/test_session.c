@@ -104,24 +104,24 @@ int solo5_app_main(const struct solo5_start_info *si)
 
     int r = 0;
     solo5_time_t ta = 0, tb = 0;
-    // ta = solo5_clock_monotonic();
-    // __asm__ volatile("mov $6, %edi;"
-    //                  "movq $0x1000, %rsi;"
-    //                  "mov $0, %ecx;"
-    //                  "movq $2, %r11;");
-    // __asm__ volatile("callq 0xfc000;"
-    //                  "mov %%ebx, %0;"
-    //                  : "=m"(r)
-    //                  :
-    //                  : "memory");
-    // tb = solo5_clock_monotonic() + NSEC_PER_SEC;
-    // printf("TIME USE: %llu\n",
-    //        (unsigned long long)(tb - ta));
-    // if (r == 15)
-    //     puts("FUNC SUCCESS\n");
-    // else
-    //     puts("FUNC NOT READY\n");
-    // ta = tb = 0;
+    ta = solo5_clock_monotonic();
+    __asm__ volatile("mov $6, %edi;"
+                     "movq $0x1000, %rsi;"
+                     "mov $0, %ecx;"
+                     "movq $2, %r11;");
+    __asm__ volatile("callq 0xfc000;"
+                     "mov %%ebx, %0;"
+                     : "=m"(r)
+                     :
+                     : "memory");
+    tb = solo5_clock_monotonic() + NSEC_PER_SEC;
+    printf("TIME USE: %llu\n",
+           (unsigned long long)(tb - ta));
+    if (r == 15)
+        puts("FUNC SUCCESS\n");
+    else
+        puts("FUNC NOT READY\n");
+    ta = tb = 0;
     ta = solo5_clock_monotonic();
     r = call_trampoline(7, 0x1000, 0, 2);
     tb = solo5_clock_monotonic() + NSEC_PER_SEC;
@@ -131,10 +131,6 @@ int solo5_app_main(const struct solo5_start_info *si)
             (unsigned long long)(tb - ta));
     if (r == 1)
         puts("TRAMPOLINE SUCCESS\n");
-    while (1)
-    {
-        /* code */
-    }
     
     return SOLO5_EXIT_SUCCESS;
 }

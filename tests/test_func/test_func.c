@@ -59,13 +59,37 @@ DEBUG_FUNCTION
 static int sum(int num) {
     int r = 0;
     r = num * (num - 1) / 2;
+    // int session_id = 0;
+    // __asm__ volatile("movq %%r11, %0;"
+	// 	   : "=m"(session_id)
+	// 	   :
+	// 	   : "memory");
+    // printf("r11:%d\n",session_id);
     return r;
 }
 
-DEBUG_VARIABLE
-static int source_id = 1;
-DEBUG_VARIABLE
-static int target_id = 0;
+//DEBUG_VARIABLE
+//static int source_id = 1;
+//DEBUG_VARIABLE
+//static int target_id = 0;
+
+/*void change_rsp(){
+   uint64_t source_id = 0;
+   __asm__ volatile("movq %%r11, %0;"
+		   : "=m"(source_id)
+		   :
+		   : "memory");
+   uint64_t target_rsp = 0x1effffff - (source_id - 1)*128*1024;
+   
+   __asm__ volatile("movq %0, %%rsp;"
+		   : 
+		   : "m"(target_rsp)
+		   : "rsp"
+		   );
+   //__asm__ volatile("push %r10;"
+   //		    "push %r11;"
+   //		   );
+}*/
 
 static void puts(const char *s)
 {
@@ -91,7 +115,7 @@ int solo5_app_main(const struct solo5_start_info *si)
     __asm__ volatile("mov $5, %edi;"
                      "movq $0x1000, %rsi;"
                      "mov $0, %ecx;"  // target id
-                     "mov $1, %r10");   // source id
+                     "mov $2, %r11");   // source id
     __asm__ volatile("callq 0xfc000;"
                      "mov %%ebx, %0;"
                      : "=m"(r)
